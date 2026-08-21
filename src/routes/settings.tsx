@@ -1512,7 +1512,7 @@ export function CategorySheet({ onClose }: { onClose: () => void }) {
             role="status"
             aria-live="polite"
             data-testid="category-collapsed-notice"
-            className="mt-2 m-0 rounded-2xl bg-surface-container px-4 py-2 text-[11px] font-semibold text-on-surface-variant"
+            className="mt-2 m-0 rounded-2xl bg-primary-container/30 px-4 py-2 text-[11px] font-semibold text-primary"
           >
             {`${visibleList.length}/${list.length}`}
           </p>
@@ -1523,8 +1523,14 @@ export function CategorySheet({ onClose }: { onClose: () => void }) {
             type="button"
             data-testid="category-toggle-all"
             aria-expanded={!collapsed}
+            aria-controls="category-list"
+            data-state={collapsed ? "collapsed" : "expanded"}
             onClick={() => setExpanded((v) => !v)}
-            className="mt-2 h-11 w-full rounded-2xl border border-outline-variant/30 text-[12px] font-semibold text-on-surface-variant focus-visible:ring-2 focus-visible:ring-primary/60"
+            className={`mt-2 h-11 w-full rounded-2xl border text-[12px] font-semibold focus-visible:ring-2 focus-visible:ring-primary/60 ${
+              collapsed
+                ? "border-primary/60 bg-primary-container/30 text-primary"
+                : "border-outline-variant/30 text-on-surface-variant"
+            }`}
           >
             {collapsed ? `${copy.showAllCategories} (${list.length})` : copy.collapseCategories}
           </button>

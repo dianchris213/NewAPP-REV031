@@ -1185,7 +1185,9 @@ export function CategorySheet({ onClose }: { onClose: () => void }) {
         aria-label={copy.categories}
         data-testid="category-sheet"
         onClick={(e) => e.stopPropagation()}
-        className="max-h-[88vh] w-full max-w-md overflow-y-auto rounded-t-[26px] border-t border-outline-variant/20 bg-surface-container-high p-5 pb-[calc(env(safe-area-inset-bottom,0px)+20px)] shadow-2xl"
+        // Bottom nav + FAB overlay the last rows of the sheet, which both hides
+        // content and intercepts pointer events; reserve room for them.
+        className="max-h-[88vh] w-full max-w-md overflow-y-auto overscroll-contain rounded-t-[26px] border-t border-outline-variant/20 bg-surface-container-high p-5 pb-[calc(env(safe-area-inset-bottom,0px)+120px)] shadow-2xl"
       >
         <span
           aria-hidden="true"

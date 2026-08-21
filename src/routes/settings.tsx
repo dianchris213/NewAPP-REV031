@@ -1066,11 +1066,7 @@ export function CategorySheet({ onClose }: { onClose: () => void }) {
   // Bug fix: the list used to start collapsed, so "Semua Jenis (5)" showed only
   // 3 rows with no indication that rows were hidden. It now starts expanded and
   // the collapsed preview always states how many of how many rows are shown.
-  const [expanded, setExpanded] = usePersistentState<boolean>(
-    CAT_EXPANDED_KEY,
-    true,
-    isBoolean,
-  );
+  const [expanded, setExpanded] = usePersistentState<boolean>(CAT_EXPANDED_KEY, true, isBoolean);
 
   const filtersDirty = !!query.trim() || typeFilter !== "all";
 

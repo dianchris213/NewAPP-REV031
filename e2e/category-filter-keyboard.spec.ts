@@ -48,7 +48,9 @@ test.describe("Kategori Transaksi — filter controls are keyboard operable", ()
     }
   });
 
-  test("Enter on the collapse toggle works even where the bottom nav overlaps", async ({ page }) => {
+  test("Enter on the collapse toggle works even where the bottom nav overlaps", async ({
+    page,
+  }) => {
     await openSheet(page);
     const rows = page.locator('[data-testid^="category-item-"]');
     const toggle = page.getByTestId("category-toggle-all");

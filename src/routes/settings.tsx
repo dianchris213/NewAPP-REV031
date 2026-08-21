@@ -1352,14 +1352,27 @@ export function CategorySheet({ onClose }: { onClose: () => void }) {
         </div>
 
         {categories.length && filtersReady && hiddenCount > 0 ? (
-          <p
-            role="status"
-            aria-live="polite"
-            data-testid="category-filter-summary"
-            className="mt-2 m-0 rounded-2xl bg-surface-container px-4 py-2 text-[11px] font-semibold text-on-surface-variant"
-          >
-            {`${list.length}/${categories.length} · ${copy.resetFilter}`}
-          </p>
+          // Bug fix: this row used to render the dead text "2/5 · Reset filter",
+          // which looked like a control but did nothing. The count is now a
+          // status message and the reset is a real, tappable button.
+          <div className="mt-2 flex items-center justify-between gap-3 rounded-2xl bg-surface-container px-4 py-2">
+            <p
+              role="status"
+              aria-live="polite"
+              data-testid="category-filter-summary"
+              className="m-0 text-[11px] font-semibold text-on-surface-variant"
+            >
+              {`${list.length}/${categories.length}`}
+            </p>
+            <button
+              type="button"
+              data-testid="category-filter-summary-reset"
+              onClick={resetFilters}
+              className="min-h-11 shrink-0 rounded-full px-3 text-[11px] font-semibold text-primary underline focus-visible:ring-2 focus-visible:ring-primary/60"
+            >
+              {copy.resetFilter}
+            </button>
+          </div>
         ) : null}
 
         <ul className="mt-3 list-none rounded-2xl bg-surface-container px-4 py-1">

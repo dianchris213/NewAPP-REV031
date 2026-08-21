@@ -452,14 +452,7 @@ export function FundSourceSheet({ onClose }: { onClose: () => void }) {
   // Filters the user changed in this session are respected as-is; only values
   // restored from storage are validated against the loaded wallets.
   const [filterTouched, setFilterTouched] = useState(false);
-  // Bug fix: the list used to start collapsed, so "Semua Jenis (5)" showed only
-  // 3 rows with no indication that rows were hidden. It now starts expanded and
-  // the collapsed preview always states how many of how many rows are shown.
-  const [expanded, setExpanded] = usePersistentState<boolean>(
-    CAT_EXPANDED_KEY,
-    true,
-    isBoolean,
-  );
+  const [expanded, setExpanded] = useState(false);
 
   const resetFilters = useCallback(() => {
     resetQuery();
@@ -1070,7 +1063,14 @@ export function CategorySheet({ onClose }: { onClose: () => void }) {
   // Only filters restored from storage are validated against the loaded data;
   // filters the user changed in this session are respected as-is.
   const [filterTouched, setFilterTouched] = useState(false);
-  const [expanded, setExpanded] = useState(false);
+  // Bug fix: the list used to start collapsed, so "Semua Jenis (5)" showed only
+  // 3 rows with no indication that rows were hidden. It now starts expanded and
+  // the collapsed preview always states how many of how many rows are shown.
+  const [expanded, setExpanded] = usePersistentState<boolean>(
+    CAT_EXPANDED_KEY,
+    true,
+    isBoolean,
+  );
 
   const filtersDirty = !!query.trim() || typeFilter !== "all";
 

@@ -88,8 +88,30 @@ export const MANY_CATEGORIES_STATE = {
  * the same handler, without hit-testing. Failures still throw, so Playwright
  * keeps the trace, screenshot and video for the run.
  */
+/**
+ * Waits until `locator` is really click-targetable: in the DOM, visible,
+ * enabled, scrolled into the sheet's viewport and — crucially — the topmost
+ * element at its own centre, i.e. not covered by the bottom navigation or FAB.
+ */
+export async function waitForClickTarget(locator: Locator, timeout = 8_000): Promise<void> {
+  await expect(locator).toBeVisible({ timeout });
+  await expect(locator).toBeEnabled({ timeout });
+  await locator.scrollIntoViewIfNeeded({ timeout }).catch(() => {});
+  await expect(async () => {
+    const topmost = await locator.evaluate((element) => {
+      const box = element.getBoundingClientRect();
+      const hit = document.elementFromPoint(box.left + box.width / 2, box.top + box.height / 2);
+      return !!hit && (hit === element || element.contains(hit));
+    });
+    expect(topmost, "element is covered by another element (bottom nav?)").toBe(true);
+  }).toPass({ timeout });
+}
+
 export async function activate(locator: Locator, key: "Enter" | " " = "Enter"): Promise<void> {
   try {
+    // Targeted retry: wait for the control to become click-targetable instead
+    // of blindly clicking into the bottom nav.
+    await waitForClickTarget(locator, 4_000).catch(() => {});
     await locator.click({ timeout: 2_000, trial: false });
     return;
   } catch (error) {

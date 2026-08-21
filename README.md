@@ -262,3 +262,17 @@ disanitasi kembali ke `all` (`sanitizeFilters`) dengan notifikasi
 `.github/workflows/ci.yml` menjalankan unit, E2E, dan axe-core secara terpisah
 dengan reporter JUnit + HTML ke `reports/`, lalu mengunggahnya sebagai artefak
 `test-reports-*` pada setiap PR dan menerbitkan ringkasan JUnit sebagai check.
+
+### Kategori Transaksi — daftar & filter
+
+- Daftar kategori tampil **penuh** secara default. Pilihan `Tampilkan semua (N)` /
+  `Sembunyikan` disimpan (`tmab-category-expanded`) sehingga tetap konsisten saat
+  berpindah halaman atau reload. Saat diringkas, notice `3/5`
+  (`category-collapsed-notice`) selalu menyatakan berapa baris yang disembunyikan —
+  ini menutup bug "filter Semua Jenis (5) tapi hanya 3 baris tampil".
+- E2E memakai helper `activate()` (`e2e/fixtures.ts`): klik pointer dulu, lalu
+  fallback ke focus + Enter khusus untuk timeout/intercept bottom nav. Kegagalan
+  lain tetap dilempar sehingga trace, screenshot, dan video terunggah CI.
+- Baseline visual kategori: `category-list-expanded`, `category-list-collapsed`,
+  `category-list-income`, `category-list-empty`, `category-filled-state`,
+  `category-empty-state`, `category-empty-filter`. Perbarui dengan `bun run e2e:update`.

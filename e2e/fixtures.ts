@@ -1,4 +1,4 @@
-import { test as base, expect, type Page } from "@playwright/test";
+import { test as base, expect, type Locator, type Page } from "@playwright/test";
 
 const STORAGE_KEY = "tmab-state-v1";
 
@@ -63,4 +63,45 @@ export async function openWhenHydrated(
     await action();
     await isOpen();
   }).toPass({ timeout: 15_000 });
+}
+
+/**
+ * Dataset with 5 categories: more than the collapsed preview, so the
+ * "Tampilkan semua (N)" affordance is rendered.
+ */
+export const MANY_CATEGORIES_STATE = {
+  ...EMPTY_STATE,
+  categories: [
+    { id: "cat-1", name: "Bonus", type: "income" as const },
+    { id: "cat-2", name: "Gaji", type: "income" as const },
+    { id: "cat-3", name: "Internet", type: "expense" as const },
+    { id: "cat-4", name: "Kopi", type: "expense" as const },
+    { id: "cat-5", name: "Makan", type: "expense" as const },
+  ],
+};
+
+/**
+ * Targeted retry for pointer interactions the bottom navigation can intercept.
+ *
+ * A short pointer click is attempted first (the real user path). When it times
+ * out or is intercepted, the control is activated through the keyboard instead —
+ * the same handler, without hit-testing. Failures still throw, so Playwright
+ * keeps the trace, screenshot and video for the run.
+ */
+export async function activate(locator: Locator, key: "Enter" | " " = "Enter"): Promise<void> {
+  try {
+    await locator.click({ timeout: 2_000, trial: false });
+    return;
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+    const recoverable =
+      /intercepts pointer events|Timeout .* exceeded|element is not stable|not visible/i.test(
+        message,
+      );
+    if (!recoverable) throw error;
+    await locator.scrollIntoViewIfNeeded().catch(() => {});
+    await locator.focus();
+    await expect(locator).toBeFocused();
+    await locator.press(key);
+  }
 }

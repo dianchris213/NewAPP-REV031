@@ -1,4 +1,11 @@
-import { test, expect, FILLED_STATE, openCategorySheet, openWhenHydrated } from "./fixtures";
+import {
+  test,
+  expect,
+  FILLED_STATE,
+  activate,
+  openCategorySheet,
+  openWhenHydrated,
+} from "./fixtures";
 
 test.use({ seed: FILLED_STATE });
 
@@ -27,10 +34,7 @@ test.describe("Kategori Transaksi — empty filter result", () => {
     // The bottom navigation overlays the sheet footer on this viewport, so a
     // pointer click can be intercepted; focus + Enter drives the same handler
     // through the keyboard path and never depends on hit-testing.
-    const reset = page.getByTestId("category-empty-reset");
-    await reset.focus();
-    await expect(reset).toBeFocused();
-    await reset.press("Enter");
+    await activate(page.getByTestId("category-empty-reset"));
     await expect(page.locator('[data-testid^="category-item-"]')).toHaveCount(3);
   });
 });

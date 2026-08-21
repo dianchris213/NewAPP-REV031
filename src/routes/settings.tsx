@@ -284,6 +284,10 @@ const isTypeFilter = (value: unknown): value is WalletType | "all" =>
 // sources, so search/filter behaviour is identical on both screens.
 const CAT_QUERY_KEY = "tmab-category-query";
 const CAT_TYPE_KEY = "tmab-category-type";
+// Whether the list is expanded is a user choice, so it survives navigation and
+// reloads just like the other filter state. Default: expanded (show everything).
+const CAT_EXPANDED_KEY = "tmab-category-expanded";
+const isBoolean = (value: unknown): value is boolean => typeof value === "boolean";
 const isCategoryTypeFilter = (value: unknown): value is TxType | "all" =>
   value === "all" || value === "income" || value === "expense";
 
@@ -448,7 +452,14 @@ export function FundSourceSheet({ onClose }: { onClose: () => void }) {
   // Filters the user changed in this session are respected as-is; only values
   // restored from storage are validated against the loaded wallets.
   const [filterTouched, setFilterTouched] = useState(false);
-  const [expanded, setExpanded] = useState(false);
+  // Bug fix: the list used to start collapsed, so "Semua Jenis (5)" showed only
+  // 3 rows with no indication that rows were hidden. It now starts expanded and
+  // the collapsed preview always states how many of how many rows are shown.
+  const [expanded, setExpanded] = usePersistentState<boolean>(
+    CAT_EXPANDED_KEY,
+    true,
+    isBoolean,
+  );
 
   const resetFilters = useCallback(() => {
     resetQuery();
@@ -1486,6 +1497,17 @@ export function CategorySheet({ onClose }: { onClose: () => void }) {
             </li>
           )}
         </ul>
+
+        {collapsed && list.length > visibleList.length ? (
+          <p
+            role="status"
+            aria-live="polite"
+            data-testid="category-collapsed-notice"
+            className="mt-2 m-0 rounded-2xl bg-surface-container px-4 py-2 text-[11px] font-semibold text-on-surface-variant"
+          >
+            {`${visibleList.length}/${list.length}`}
+          </p>
+        ) : null}
 
         {list.length > COLLAPSED_CATEGORY_ROWS && !filtersDirty ? (
           <button

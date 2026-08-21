@@ -31,8 +31,12 @@ jobs:
       - name: Install Playwright browsers
         run: bunx playwright install --with-deps chromium
 
+      # Step-level timeout stays below the job timeout so a hung pointer
+      # interaction fails this step instead of killing the job, guaranteeing the
+      # upload step below still runs and publishes the trace + screenshot.
       - name: E2E tests
-        run: bunx playwright test
+        timeout-minutes: 12
+        run: bunx playwright test --trace=retain-on-failure
 
       # Traces, screenshots and videos are produced on failure (see
       # playwright.config.ts) and uploaded unconditionally so evidence for a

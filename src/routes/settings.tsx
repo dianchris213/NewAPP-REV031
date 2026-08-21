@@ -1185,7 +1185,7 @@ export function CategorySheet({ onClose }: { onClose: () => void }) {
         aria-label={copy.categories}
         data-testid="category-sheet"
         onClick={(e) => e.stopPropagation()}
-        className="max-h-[88vh] w-full max-w-md overflow-y-auto rounded-t-[26px] border-t border-outline-variant/20 bg-surface-container-high p-5 pb-[calc(env(safe-area-inset-bottom,0px)+20px)] shadow-2xl"
+        className="max-h-[88vh] w-full max-w-md overflow-y-auto overscroll-contain rounded-t-[26px] border-t border-outline-variant/20 bg-surface-container-high p-5 pb-[calc(env(safe-area-inset-bottom,0px)+120px)] shadow-2xl"
       >
         <span
           aria-hidden="true"
@@ -1352,17 +1352,34 @@ export function CategorySheet({ onClose }: { onClose: () => void }) {
         </div>
 
         {categories.length && filtersReady && hiddenCount > 0 ? (
-          <p
-            role="status"
-            aria-live="polite"
-            data-testid="category-filter-summary"
-            className="mt-2 m-0 rounded-2xl bg-surface-container px-4 py-2 text-[11px] font-semibold text-on-surface-variant"
-          >
-            {`${list.length}/${categories.length} · ${copy.resetFilter}`}
-          </p>
+          // Bug fix: this row used to render the dead text "2/5 · Reset filter",
+          // which looked like a control but did nothing. The count is now a
+          // status message and the reset is a real, tappable button.
+          <div className="mt-2 flex items-center justify-between gap-3 rounded-2xl bg-surface-container px-4 py-2">
+            <p
+              role="status"
+              aria-live="polite"
+              data-testid="category-filter-summary"
+              className="m-0 text-[11px] font-semibold text-on-surface-variant"
+            >
+              {`${list.length}/${categories.length}`}
+            </p>
+            <button
+              type="button"
+              data-testid="category-filter-summary-reset"
+              onClick={resetFilters}
+              className="min-h-11 shrink-0 rounded-full px-3 text-[11px] font-semibold text-primary underline focus-visible:ring-2 focus-visible:ring-primary/60"
+            >
+              {copy.resetFilter}
+            </button>
+          </div>
         ) : null}
 
-        <ul className="mt-3 list-none rounded-2xl bg-surface-container px-4 py-1">
+        <ul
+          id="category-list"
+          aria-label={copy.categories}
+          className="mt-3 list-none rounded-2xl bg-surface-container px-4 py-1"
+        >
           {visibleList.length ? (
             visibleList.map((c) => {
               const scope = c.walletId
@@ -1499,7 +1516,7 @@ export function CategorySheet({ onClose }: { onClose: () => void }) {
             role="status"
             aria-live="polite"
             data-testid="category-collapsed-notice"
-            className="mt-2 m-0 rounded-2xl bg-surface-container px-4 py-2 text-[11px] font-semibold text-on-surface-variant"
+            className="mt-2 m-0 rounded-2xl bg-primary-container/30 px-4 py-2 text-[11px] font-semibold text-primary"
           >
             {`${visibleList.length}/${list.length}`}
           </p>
@@ -1510,8 +1527,14 @@ export function CategorySheet({ onClose }: { onClose: () => void }) {
             type="button"
             data-testid="category-toggle-all"
             aria-expanded={!collapsed}
+            aria-controls="category-list"
+            data-state={collapsed ? "collapsed" : "expanded"}
             onClick={() => setExpanded((v) => !v)}
-            className="mt-2 h-11 w-full rounded-2xl border border-outline-variant/30 text-[12px] font-semibold text-on-surface-variant focus-visible:ring-2 focus-visible:ring-primary/60"
+            className={`mt-2 h-11 w-full rounded-2xl border text-[12px] font-semibold focus-visible:ring-2 focus-visible:ring-primary/60 ${
+              collapsed
+                ? "border-primary/60 bg-primary-container/30 text-primary"
+                : "border-outline-variant/30 text-on-surface-variant"
+            }`}
           >
             {collapsed ? `${copy.showAllCategories} (${list.length})` : copy.collapseCategories}
           </button>

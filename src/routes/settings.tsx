@@ -1375,7 +1375,11 @@ export function CategorySheet({ onClose }: { onClose: () => void }) {
           </div>
         ) : null}
 
-        <ul className="mt-3 list-none rounded-2xl bg-surface-container px-4 py-1">
+        <ul
+          id="category-list"
+          aria-label={copy.categories}
+          className="mt-3 list-none rounded-2xl bg-surface-container px-4 py-1"
+        >
           {visibleList.length ? (
             visibleList.map((c) => {
               const scope = c.walletId

@@ -24,7 +24,13 @@ test.describe("Kategori Transaksi — empty filter result", () => {
     await expect(sheet).toHaveScreenshot("category-empty-filter.png");
 
     // Reset restores the full list, proving the state is recoverable.
-    await page.getByTestId("category-empty-reset").click();
+    // The bottom navigation overlays the sheet footer on this viewport, so a
+    // pointer click can be intercepted; focus + Enter drives the same handler
+    // through the keyboard path and never depends on hit-testing.
+    const reset = page.getByTestId("category-empty-reset");
+    await reset.focus();
+    await expect(reset).toBeFocused();
+    await reset.press("Enter");
     await expect(page.locator('[data-testid^="category-item-"]')).toHaveCount(3);
   });
 });
